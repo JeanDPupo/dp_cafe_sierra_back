@@ -1,0 +1,15 @@
+meta {
+  name: My Products
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/v1/users/me/products
+  body: none
+}
+
+headers {
+  Accept: application/json
+  Authorization: Bearer {{token}}
+}

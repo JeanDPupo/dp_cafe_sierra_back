@@ -1,0 +1,15 @@
+meta {
+  name: Checkout
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/orders/checkout
+  body: none
+}
+
+headers {
+  Accept: application/json
+  Authorization: Bearer {{token}}
+}

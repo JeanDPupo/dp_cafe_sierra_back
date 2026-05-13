@@ -1,0 +1,26 @@
+meta {
+  name: Register
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/auth/register
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "fullName": "Jean Carlos Demo",
+    "email": "demo@cowork.local",
+    "password": "Demo12345*",
+    "phone": "3001234567",
+    "whatsappNumber": "3001234567"
+  }
+}

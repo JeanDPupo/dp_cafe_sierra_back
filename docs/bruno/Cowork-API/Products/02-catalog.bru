@@ -1,0 +1,15 @@
+meta {
+  name: Catalog
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/v1/products?priceMin=10000&priceMax=50000&location=Sacramento&variety=Arabica
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+}

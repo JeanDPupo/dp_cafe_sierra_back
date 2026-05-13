@@ -1,0 +1,15 @@
+meta {
+  name: List Comments
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/v1/products/{{productId}}/comments
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+}

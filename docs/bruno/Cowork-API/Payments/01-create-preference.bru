@@ -1,0 +1,15 @@
+meta {
+  name: Create Preference
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/payments/orders/{{orderId}}/preference
+  body: none
+}
+
+headers {
+  Accept: application/json
+  Authorization: Bearer {{token}}
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Get Public Producer Profile
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/v1/producers/{{producerProfileId}}
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+}

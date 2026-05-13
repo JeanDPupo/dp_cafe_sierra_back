@@ -1,0 +1,179 @@
+generame instrucciones, un plan para unn agente que me ayude a completar todo el backend desde cero, te dejo en la imagen la estructuraa recomendada por un profesor src/main/java/edu/unimagdalena/cowork/
+├── api/
+│   ├── dto/
+│   │   ├── MemberRequestDto.java
+│   │   ├── MemberResponseDto.java
+│   │   └── error/
+│   │       └── ErrorResponse.java
+│   └── MemberController.java
+├── domain/
+│   ├── entities/
+│   │   └── Member.java
+│   ├── repositories/
+│   │   └── MemberRepository.java
+│   ├── services/
+│   │   └── MemberService.java
+│   ├── mapper/
+│   │   ├── IMemberMapper.java
+│   │   └── MemberMapper.java
+│   └── exception/
+│       └── MemberNotFoundException.java
+└── shared/ (opcional, para utilidades)
+
+Que quede un plan completo y limpio para que otro agente, venga y haga toda la carpinteria
+Ahí esta toda la info , funcionalidades y todo, además, te voy a dejar el plan del frontend(por ahora).
+
+Here is Claude's plan:
+
+Plan de Implementación: Frontend Plataforma de Comercialización de Café
+Context
+Proyecto: Prototipo de Plataforma web para la comercialización directa de Café entre Caficultores del Corregimiento de Sacramento y Consumidores Finales - Universidad del Magdalena.
+
+Objetivo: Crear un frontend completamente funcional y usable que demuestre el flujo completo de la plataforma con rol switching entre Productor y Consumidor.
+
+Tech Stack:
+
+React 19.2.6 (ya configurado en /mi-frontend/)
+Ubicación: c:\desarrollo\UNIMAG_projects\PrototipoWebComercializaciónCaféSacramento\mi-frontend\
+Insights Clave de las Entrevistas:
+
+MVP real necesita solo 3 funciones: productor publica → consumidor encuentra → contactan
+PWA crítico para zonas con conectividad intermitente
+Simplicidad de interfaz es fundamental para usuarios rurales
+Propuesta de valor debe ser concreta
+Acompañamiento humano/contexto es esencial
+Funcionalidades Comprometidas (MVP)
+F1: Registro de Usuarios - Diferenciar roles (Productor/Consumidor)
+F2: Publicación de Productos - Productor publica café con foto, precio, cantidad, ubicación
+F3: Catálogo - Consumidor visualiza cafés disponibles con filtros básicos
+F4: Contacto vía WhatsApp - Botón directo para contactar productor
+F5: Perfil del Productor - Vista de quién produce y desde dónde
+Approach Recomendado
+Fase 1: Estructura Base y Navegación
+Componente Principal: RoleSelector - Permite cambiar entre "Productor" y "Consumidor"
+Context API: Para manejar rol activo y estado global de productos
+Mock Data: Datos locales simulados de productos y productores
+Fase 2: Pantallas Principales
+Para Productor:
+
+RegistroProductor - Formulario de registro
+PublicacionProductos - Crear/editar publicación
+MisProductos - Lista de productos publicados
+Para Consumidor:
+
+RegistroConsumidor - Formulario de registro
+Catalogo - Vista en grid/lista de productos con filtros
+DetalleProducto - Vista individual con botón WhatsApp
+PerfilProductor - Información del productor
+Fase 3: Componentes Reutilizables
+ProductCard - Tarjeta de producto
+Filtros - Filtros por precio y ubicación
+BotonWhatsApp - Botón de contacto directo
+Header - Navegación con selector de rol
+Fase 4: Transiciones y Animaciones
+Usar CSS Transitions para cambios entre roles
+Transiciones suaves entre pantallas
+Loading states visuales
+Fase 5: UI/UX
+Diseño limpio y accesible
+Colores relacionados con café (marrón, verde)
+Tipografía legible para usuarios rurales
+Responsivo (mobile-first)
+Estructura de Carpetas Propuesta
+Datos Mock
+Estructura de datos para productos:
+
+Flujos de Navegación
+Rol Productor:
+
+Home → Selector Rol → Vista Productor
+Opción: Registrarse → Publicar Producto → Ver Mis Productos
+Cada producto muestra: nombre, precio, cantidad, foto, ubicación
+Rol Consumidor:
+
+Home → Selector Rol → Vista Consumidor
+Ver Catálogo → Filtrar por Precio/Ubicación
+Click en producto → Ver Detalle + Perfil Productor
+Botón WhatsApp → Link de contacto directo
+Archivos Críticos a Modificar/Crear
+Archivo	Acción	Descripción
+src/App.js	Reescribir	Estructura principal con RoleContext
+src/context/RoleContext.jsx	Crear	Manejo de estado global del rol
+src/data/mockData.js	Crear	Datos simulados de productos
+src/components/RoleSelector.jsx	Crear	Switcher de rol (Productor/Consumidor)
+src/pages/Productor/*	Crear	Todas las pantallas para productores
+src/pages/Consumidor/*	Crear	Todas las pantallas para consumidores
+src/styles/App.css	Reescribir	Estilos completos + transiciones
+public/index.html	Actualizar	Meta tags y favicon si es necesario
+Issues Encontrados & Fixes Requeridos
+Issue 1: Import Paths en Pages
+Status: ✅ FIXED
+
+Archivos en /pages/Productor/ y /pages/Consumidor/ tenían rutas relativas incorrectas
+Cambio: ../context/ → ../../context/ (subir 2 niveles desde pages/Rol/ a src/)
+Archivos corregidos:
+src/pages/Consumidor/Catalogo.jsx
+src/pages/Consumidor/DetalleProducto.jsx
+src/pages/Consumidor/PerflProductor.jsx
+src/pages/Consumidor/HomeConsumidor.jsx
+src/pages/Productor/HomeProductor.jsx
+src/pages/Productor/PublicacionProductos.jsx
+src/pages/Productor/MisProductos.jsx
+Issue 2: Tailwind CSS PostCSS Plugin Error
+Status: PENDING FIX
+
+Error: "tailwindcss has moved to a separate package @tailwindcss/postcss"
+Causa:
+package.json ya tiene @tailwindcss/postcss pero node_modules desincronizado
+postcss.config.js ya está configurado correctamente con @tailwindcss/postcss
+Fix requerido:
+Limpiar node_modules y reinstalar: npm ci (más seguro que npm install)
+Reiniciar servidor dev
+Razón: Asegurar que las dependencias están en sync con la nueva versión
+Verificación y Testing
+End-to-End Walkthrough:
+
+✅ Iniciar app - Ver selector de rol prominente
+✅ Cambiar entre Productor/Consumidor - Transición suave
+✅ Como Productor:
+Acceder a vista de registro
+Ver formulario de publicación
+Visualizar mis productos publicados
+✅ Como Consumidor:
+Ver catálogo de productos
+Aplicar filtros (precio, ubicación)
+Clickear en producto → ver detalle
+Ver perfil del productor
+Clickear botón WhatsApp → generar enlace
+✅ Cambiar rol y verificar que la interfaz se actualiza sin perder datos
+Responsividad:
+
+Testeado en mobile, tablet, desktop
+Imágenes optimizadas
+Texto legible en pantallas pequeñas
+Decisiones Técnicas
+Context API vs Redux: Context API suficiente para este MVP
+Mock Data en Cliente: Inicialmente para demostración. Backend integrable luego
+PWA: Preparado pero no implementado aún (futuro)
+Imagen de Productos: Usar placeholder images de alta calidad para demo
+WhatsApp Link: Formato: https://wa.me/57300123456...
+Próximos Pasos Después (Fuera de Scope)
+Conectar con backend Spring Boot
+Implementar autenticación real
+Sistema de base de datos persistente
+Pasarela de pagos
+Sistema de valoraciones
+Versión PWA para offline
+Integración con servicios de geolocalización para mostrar ubicación de productores
+Implementar notificaciones push para nuevos productos o mensajes
+
+
+Procesos del cafe que debemos mostrar en el frontend:
+¿ Cual fue el proceso para el cafe que sirves en tu mesa?
+¿ Que clase ?
+siembra, cosecha, lavado y secado, tostado, molido, empaque, distribución.Los procesos de siembra, cultivo, secado y lavado es obligatoria, de ahi en adelante son opcional aportar los procesos, cada proceso que el produtor decida aportar debe tener su descripción y fotos/videos representativas(opcionales).
+
+del proceso de siembra surgen varios tipos de cafe, el productor deberá especifiar el proceso y el tipo de cafe que se obtuvo.
+del proceso de lavado y secado surgen varios tipos de  grano, el productor deberá especificar el/los proceso/s y el tipo de cafe que se obtuvo.
+
+Además, estamos cuestionando el PWA, ya que esta aplicación es web, tendríamos que hacer una app que permita implementar el pwa, te diría que dejes  la base para eso, perotu me dirás si se puede añadir después o es mejor dejar la base para entonces

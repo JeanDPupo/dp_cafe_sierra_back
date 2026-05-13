@@ -1,0 +1,15 @@
+meta {
+  name: Sale Detail
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/v1/users/me/sales/{{orderId}}
+  body: none
+}
+
+headers {
+  Accept: application/json
+  Authorization: Bearer {{token}}
+}

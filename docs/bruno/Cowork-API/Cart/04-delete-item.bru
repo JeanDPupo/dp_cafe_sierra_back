@@ -1,0 +1,15 @@
+meta {
+  name: Delete Cart Item
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/api/v1/cart/items/{{cartItemId}}
+  body: none
+}
+
+headers {
+  Accept: application/json
+  Authorization: Bearer {{token}}
+}

@@ -1,0 +1,25 @@
+meta {
+  name: Webhook Mercado Pago
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/payments/webhooks/mercadopago
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "id": "mp-demo-123",
+    "type": "payment",
+    "status": "APPROVED",
+    "external_reference": "order-{{orderId}}"
+  }
+}

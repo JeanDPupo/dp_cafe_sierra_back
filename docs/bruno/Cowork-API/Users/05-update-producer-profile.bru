@@ -1,0 +1,30 @@
+meta {
+  name: Update Producer Profile
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/users/me/producer-profile
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "activeSeller": true,
+    "brandName": "J-Cafe Demo Premium",
+    "farmName": "Los Limos de la Fe",
+    "bio": "Perfil actualizado para pruebas.",
+    "story": "Nueva historia del productor.",
+    "locationText": "Sacramento, Fundacion, Magdalena",
+    "gps": "10.3910,-73.5475",
+    "yearsExperience": "16 anos",
+    "coverImageUrl": "https://example.com/finca-premium.jpg"
+  }
+}

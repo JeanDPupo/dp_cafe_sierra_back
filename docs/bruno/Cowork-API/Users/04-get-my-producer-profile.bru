@@ -1,0 +1,15 @@
+meta {
+  name: Get My Producer Profile
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/users/me/producer-profile
+  body: none
+}
+
+headers {
+  Accept: application/json
+  Authorization: Bearer {{token}}
+}

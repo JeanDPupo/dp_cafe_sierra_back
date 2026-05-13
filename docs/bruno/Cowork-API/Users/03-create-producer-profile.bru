@@ -1,0 +1,30 @@
+meta {
+  name: Create Producer Profile
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/users/me/producer-profile
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "activeSeller": true,
+    "brandName": "J-Cafe Demo",
+    "farmName": "Los Limos de la Fe",
+    "bio": "Cafe de origen de Sacramento.",
+    "story": "Historia de productor y finca para pruebas.",
+    "locationText": "Sacramento, Fundacion, Magdalena",
+    "gps": "10.3910,-73.5475",
+    "yearsExperience": "15 anos",
+    "coverImageUrl": "https://example.com/finca.jpg"
+  }
+}

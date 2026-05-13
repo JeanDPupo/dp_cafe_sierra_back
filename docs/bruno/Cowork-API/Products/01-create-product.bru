@@ -1,0 +1,70 @@
+meta {
+  name: Create Product
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/products
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "name": "Cafe Arabica Premium",
+    "variety": "Arabica",
+    "pricePerKg": 28000,
+    "availableKg": 15,
+    "description": "Cafe de la Sierra Nevada con trazabilidad completa.",
+    "mainImageUrl": "https://example.com/cafe.jpg",
+    "processes": [
+      {
+        "stage": "SIEMBRA",
+        "description": "Proceso de siembra con seleccion de semilla.",
+        "resultType": "Arabica",
+        "orderIndex": 1,
+        "media": [
+          {
+            "mediaType": "IMAGE",
+            "url": "https://example.com/siembra.jpg",
+            "caption": "Siembra"
+          }
+        ]
+      },
+      {
+        "stage": "CULTIVO",
+        "description": "Cultivo con manejo tradicional.",
+        "resultType": "Planta en crecimiento",
+        "orderIndex": 2,
+        "media": []
+      },
+      {
+        "stage": "COSECHA",
+        "description": "Cosecha manual del fruto maduro.",
+        "resultType": "Cereza madura",
+        "orderIndex": 3,
+        "media": []
+      },
+      {
+        "stage": "LAVADO_SECADO",
+        "description": "Lavado y secado controlado.",
+        "resultType": "Grano pergamino",
+        "orderIndex": 4,
+        "media": []
+      },
+      {
+        "stage": "TOSTADO",
+        "description": "Tostado medio.",
+        "resultType": "Cafe tostado",
+        "orderIndex": 5,
+        "media": []
+      }
+    ]
+  }
+}

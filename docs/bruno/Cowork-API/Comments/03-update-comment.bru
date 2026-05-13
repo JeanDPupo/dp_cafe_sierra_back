@@ -1,0 +1,24 @@
+meta {
+  name: Update Comment
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/comments/{{commentId}}
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "rating": 4,
+    "content": "Comentario actualizado desde Bruno.",
+    "visible": true
+  }
+}

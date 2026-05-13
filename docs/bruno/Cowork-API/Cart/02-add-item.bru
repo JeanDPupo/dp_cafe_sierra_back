@@ -1,0 +1,23 @@
+meta {
+  name: Add Cart Item
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/cart/items
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "productId": {{productId}},
+    "quantityKg": 2
+  }
+}

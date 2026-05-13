@@ -1,0 +1,58 @@
+meta {
+  name: Update Product
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/products/{{productId}}
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "name": "Cafe Arabica Premium Actualizado",
+    "variety": "Arabica",
+    "pricePerKg": 30000,
+    "availableKg": 12,
+    "description": "Descripcion actualizada para pruebas.",
+    "mainImageUrl": "https://example.com/cafe-actualizado.jpg",
+    "status": "ACTIVE",
+    "processes": [
+      {
+        "stage": "SIEMBRA",
+        "description": "Siembra actualizada.",
+        "resultType": "Arabica",
+        "orderIndex": 1,
+        "media": []
+      },
+      {
+        "stage": "CULTIVO",
+        "description": "Cultivo actualizado.",
+        "resultType": "Planta en crecimiento",
+        "orderIndex": 2,
+        "media": []
+      },
+      {
+        "stage": "COSECHA",
+        "description": "Cosecha selectiva.",
+        "resultType": "Cereza madura",
+        "orderIndex": 3,
+        "media": []
+      },
+      {
+        "stage": "LAVADO_SECADO",
+        "description": "Lavado secado actualizado.",
+        "resultType": "Grano lavado",
+        "orderIndex": 4,
+        "media": []
+      }
+    ]
+  }
+}
