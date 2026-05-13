@@ -2,9 +2,11 @@ package edu.unimagdalena.cowork.domain.services;
 
 import edu.unimagdalena.cowork.api.dto.ProducerProfileDtos;
 import edu.unimagdalena.cowork.api.dto.ProductDtos;
+import edu.unimagdalena.cowork.domain.entities.Farm;
 import edu.unimagdalena.cowork.domain.entities.ProducerProfile;
 import edu.unimagdalena.cowork.domain.entities.User;
 import edu.unimagdalena.cowork.domain.exception.ResourceNotFoundException;
+import edu.unimagdalena.cowork.domain.repositories.FarmRepository;
 import edu.unimagdalena.cowork.domain.repositories.ProducerProfileRepository;
 import java.util.List;
 import org.springframework.context.annotation.Lazy;
@@ -15,16 +17,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProducerProfileService {
 
     private final ProducerProfileRepository producerProfileRepository;
+    private final FarmRepository farmRepository;
     private final UserService userService;
     private final ProductService productService;
 
     public ProducerProfileService(
             ProducerProfileRepository producerProfileRepository,
+            FarmRepository farmRepository,
             UserService userService,
             @Lazy
             ProductService productService
     ) {
         this.producerProfileRepository = producerProfileRepository;
+        this.farmRepository = farmRepository;
         this.userService = userService;
         this.productService = productService;
     }
@@ -63,16 +68,59 @@ public class ProducerProfileService {
         return toResponse(profile, productService.getCatalogItemsByProducer(profileId));
     }
 
+    @Transactional
+    public ProducerProfileDtos.FarmResponse createFarm(Long userId, ProducerProfileDtos.FarmRequest request) {
+        ProducerProfile profile = getByUserId(userId);
+        Farm farm = new Farm();
+        farm.setProducerProfile(profile);
+        applyFarm(request, farm);
+        farmRepository.save(farm);
+        return toFarmResponse(farm);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProducerProfileDtos.FarmResponse> getMyFarms(Long userId) {
+        ProducerProfile profile = getByUserId(userId);
+        return farmRepository.findByProducerProfileIdOrderByCreatedAtDesc(profile.getId()).stream()
+                .map(this::toFarmResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Farm getFarmForProducer(Long producerProfileId, Long farmId) {
+        return farmRepository.findByIdAndProducerProfileId(farmId, producerProfileId)
+                .orElseThrow(() -> new ResourceNotFoundException("Finca no encontrada para este productor"));
+    }
+
     private void apply(ProducerProfileDtos.UpsertProducerProfileRequest request, ProducerProfile profile) {
         profile.setActiveSeller(request.activeSeller());
         profile.setBrandName(request.brandName());
-        profile.setFarmName(request.farmName());
         profile.setBio(request.bio());
         profile.setStory(request.story());
         profile.setLocationText(request.locationText());
         profile.setGps(request.gps());
         profile.setYearsExperience(request.yearsExperience());
         profile.setCoverImageUrl(request.coverImageUrl());
+    }
+
+    private void applyFarm(ProducerProfileDtos.FarmRequest request, Farm farm) {
+        farm.setName(request.name());
+        farm.setLocationText(request.locationText());
+        farm.setGps(request.gps());
+        farm.setDescription(request.description());
+        farm.setActive(request.active());
+    }
+
+    public ProducerProfileDtos.FarmResponse toFarmResponse(Farm farm) {
+        return new ProducerProfileDtos.FarmResponse(
+                farm.getId(),
+                farm.getName(),
+                farm.getLocationText(),
+                farm.getGps(),
+                farm.getDescription(),
+                farm.isActive(),
+                farm.getCreatedAt()
+        );
     }
 
     public ProducerProfileDtos.ProducerProfileResponse toResponse(ProducerProfile profile, List<ProductDtos.ProductCatalogItemResponse> products) {
@@ -82,7 +130,6 @@ public class ProducerProfileService {
                 profile.getUser().getFullName(),
                 profile.isActiveSeller(),
                 profile.getBrandName(),
-                profile.getFarmName(),
                 profile.getBio(),
                 profile.getStory(),
                 profile.getLocationText(),
@@ -90,6 +137,9 @@ public class ProducerProfileService {
                 profile.getYearsExperience(),
                 profile.getCoverImageUrl(),
                 profile.getCreatedAt(),
+                farmRepository.findByProducerProfileIdOrderByCreatedAtDesc(profile.getId()).stream()
+                        .map(this::toFarmResponse)
+                        .toList(),
                 products
         );
     }

@@ -13,7 +13,6 @@ public final class ProducerProfileDtos {
     public record UpsertProducerProfileRequest(
             boolean activeSeller,
             @NotBlank @Size(max = 120) String brandName,
-            @NotBlank @Size(max = 120) String farmName,
             @Size(max = 500) String bio,
             @Size(max = 1500) String story,
             @NotBlank @Size(max = 180) String locationText,
@@ -23,13 +22,32 @@ public final class ProducerProfileDtos {
     ) {
     }
 
+    public record FarmRequest(
+            @NotBlank @Size(max = 120) String name,
+            @NotBlank @Size(max = 180) String locationText,
+            @Size(max = 80) String gps,
+            @Size(max = 800) String description,
+            boolean active
+    ) {
+    }
+
+    public record FarmResponse(
+            Long id,
+            String name,
+            String locationText,
+            String gps,
+            String description,
+            boolean active,
+            Instant createdAt
+    ) {
+    }
+
     public record ProducerProfileResponse(
             Long id,
             Long userId,
             String ownerName,
             boolean activeSeller,
             String brandName,
-            String farmName,
             String bio,
             String story,
             String locationText,
@@ -37,6 +55,7 @@ public final class ProducerProfileDtos {
             String yearsExperience,
             String coverImageUrl,
             Instant createdAt,
+            List<FarmResponse> farms,
             List<ProductDtos.ProductCatalogItemResponse> products
     ) {
     }

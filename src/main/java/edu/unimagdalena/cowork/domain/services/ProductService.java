@@ -4,6 +4,7 @@ import edu.unimagdalena.cowork.api.dto.ProductDtos;
 import edu.unimagdalena.cowork.domain.entities.MediaType;
 import edu.unimagdalena.cowork.domain.entities.ProcessMedia;
 import edu.unimagdalena.cowork.domain.entities.ProducerProfile;
+import edu.unimagdalena.cowork.domain.entities.Farm;
 import edu.unimagdalena.cowork.domain.entities.Product;
 import edu.unimagdalena.cowork.domain.entities.ProductProcess;
 import edu.unimagdalena.cowork.domain.entities.ProductProcessStage;
@@ -60,6 +61,7 @@ public class ProductService {
 
         Product product = new Product();
         product.setProducerProfile(profile);
+        product.setFarm(resolveFarm(profile, request.farmId()));
         product.setName(request.name());
         product.setVariety(request.variety());
         product.setPricePerKg(request.pricePerKg());
@@ -98,6 +100,8 @@ public class ProductService {
                 product.getId(),
                 product.getName(),
                 product.getVariety(),
+                product.getFarm().getId(),
+                product.getFarm().getName(),
                 product.getPricePerKg(),
                 product.getAvailableKg(),
                 product.getDescription(),
@@ -129,6 +133,7 @@ public class ProductService {
     public ProductDtos.ProductDetailResponse update(Long userId, Long productId, ProductDtos.ProductUpdateRequest request) {
         Product product = assertOwnership(userId, productId);
         if (request.name() != null) product.setName(request.name());
+        if (request.farmId() != null) product.setFarm(resolveFarm(product.getProducerProfile(), request.farmId()));
         if (request.variety() != null) product.setVariety(request.variety());
         if (request.pricePerKg() != null) product.setPricePerKg(request.pricePerKg());
         if (request.availableKg() != null) product.setAvailableKg(request.availableKg());
@@ -234,6 +239,8 @@ public class ProductService {
                 product.getProducerProfile().getId(),
                 product.getProducerProfile().getBrandName(),
                 product.getProducerProfile().getLocationText(),
+                product.getFarm().getId(),
+                product.getFarm().getName(),
                 product.getName(),
                 product.getVariety(),
                 product.getPricePerKg(),
@@ -247,5 +254,9 @@ public class ProductService {
 
     private String blankToNull(String value) {
         return value == null || value.isBlank() ? null : value;
+    }
+
+    private Farm resolveFarm(ProducerProfile profile, Long farmId) {
+        return producerProfileService.getFarmForProducer(profile.getId(), farmId);
     }
 }

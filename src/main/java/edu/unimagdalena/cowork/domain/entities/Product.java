@@ -22,6 +22,10 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "producer_profile_id", nullable = false)
     private ProducerProfile producerProfile;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "farm_id", nullable = false)
+    private Farm farm;
+
     @Column(nullable = false, length = 140)
     private String name;
 

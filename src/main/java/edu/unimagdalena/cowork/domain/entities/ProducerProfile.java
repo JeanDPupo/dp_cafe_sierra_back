@@ -25,9 +25,6 @@ public class ProducerProfile extends BaseEntity {
     @Column(nullable = false, length = 120)
     private String brandName;
 
-    @Column(nullable = false, length = 120)
-    private String farmName;
-
     @Column(length = 500)
     private String bio;
 

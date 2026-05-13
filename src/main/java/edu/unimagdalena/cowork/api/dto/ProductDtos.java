@@ -32,6 +32,7 @@ public final class ProductDtos {
     }
 
     public record ProductCreateRequest(
+            @NotNull Long farmId,
             @NotBlank @Size(max = 140) String name,
             @NotBlank @Size(max = 80) String variety,
             @NotNull @DecimalMin("0.01") BigDecimal pricePerKg,
@@ -43,6 +44,7 @@ public final class ProductDtos {
     }
 
     public record ProductUpdateRequest(
+            Long farmId,
             @Size(max = 140) String name,
             @Size(max = 80) String variety,
             @DecimalMin("0.01") BigDecimal pricePerKg,
@@ -59,6 +61,8 @@ public final class ProductDtos {
             Long producerProfileId,
             String producerBrandName,
             String producerLocation,
+            Long farmId,
+            String farmName,
             String name,
             String variety,
             BigDecimal pricePerKg,
@@ -92,6 +96,8 @@ public final class ProductDtos {
             Long id,
             String name,
             String variety,
+            Long farmId,
+            String farmName,
             BigDecimal pricePerKg,
             BigDecimal availableKg,
             String description,

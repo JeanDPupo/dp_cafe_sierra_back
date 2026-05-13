@@ -69,6 +69,18 @@ public class UserController {
         return producerProfileService.getPublicProfile(id);
     }
 
+    @GetMapping("/users/me/farms")
+    public java.util.List<ProducerProfileDtos.FarmResponse> myFarms() {
+        return producerProfileService.getMyFarms(SecurityUtils.currentUserId());
+    }
+
+    @PostMapping("/users/me/farms")
+    public ProducerProfileDtos.FarmResponse createFarm(
+            @Valid @RequestBody ProducerProfileDtos.FarmRequest request
+    ) {
+        return producerProfileService.createFarm(SecurityUtils.currentUserId(), request);
+    }
+
     @GetMapping("/users/me/products")
     public List<ProductDtos.ProductCatalogItemResponse> myProducts() {
         return productService.getMine(SecurityUtils.currentUserId());

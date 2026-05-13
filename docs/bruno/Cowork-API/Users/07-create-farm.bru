@@ -1,0 +1,26 @@
+meta {
+  name: Create Farm
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/v1/users/me/farms
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "name": "Finca La Esperanza",
+    "locationText": "Sacramento, Fundacion, Magdalena",
+    "gps": "10.4012,-73.5521",
+    "description": "Segunda finca para lotes de altura y sombra.",
+    "active": true
+  }
+}

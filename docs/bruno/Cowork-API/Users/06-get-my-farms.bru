@@ -1,0 +1,15 @@
+meta {
+  name: Get My Farms
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/v1/users/me/farms
+  body: none
+}
+
+headers {
+  Accept: application/json
+  Authorization: Bearer {{token}}
+}

@@ -8,9 +8,18 @@ Ubicacion: `mi-backend/docs/bruno/Cowork-API`
 3. `Auth/02-login`
 4. Copiar el `token` del login al environment `local.bru`
 5. `Users/03-create-producer-profile`
-6. `Products/01-create-product`
-7. Actualizar `producerProfileId` y `productId` en el environment
-8. Probar `Comments`, `Cart`, `Orders` y `Payments`
+6. `Users/07-create-farm` si quieres registrar una o mas fincas adicionales
+7. Actualizar `producerProfileId` y `farmId` en el environment
+8. `Products/01-create-product`
+9. Actualizar `productId` en el environment
+10. Probar `Comments`, `Cart`, `Orders` y `Payments`
+
+## Flujo con una sola cuenta
+- El registro y login son unificados: todos entran como usuarios.
+- Un usuario puede comprar de inmediato.
+- Cuando quiera vender, primero crea o completa su `producer-profile`.
+- Un productor puede tener varias fincas.
+- Cada nuevo lote requiere `farmId`, para dejar claro a que finca pertenece.
     
 ## Sobre el error `Connection refused`
 Ese error no es de JWT.
