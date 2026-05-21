@@ -8,6 +8,11 @@ public final class PaymentDtos {
     private PaymentDtos() {
     }
 
+    public record PaymentPreferenceRequest(
+            String provider
+    ) {
+    }
+
     public record PaymentPreferenceResponse(
             Long paymentId,
             String externalReference,

@@ -6,6 +6,7 @@ import edu.unimagdalena.cowork.domain.entities.Payment;
 import edu.unimagdalena.cowork.domain.entities.PaymentEvent;
 import edu.unimagdalena.cowork.domain.entities.PaymentProvider;
 import edu.unimagdalena.cowork.domain.entities.PaymentStatus;
+import edu.unimagdalena.cowork.domain.exception.BadRequestException;
 import edu.unimagdalena.cowork.domain.exception.ForbiddenOperationException;
 import edu.unimagdalena.cowork.domain.exception.ResourceNotFoundException;
 import edu.unimagdalena.cowork.domain.repositories.PaymentEventRepository;
@@ -47,23 +48,28 @@ public class PaymentService {
     }
 
     @Transactional
-    public PaymentDtos.PaymentPreferenceResponse createPreference(Long userId, Long orderId) {
+    public PaymentDtos.PaymentPreferenceResponse createPreference(Long userId, Long orderId, String providerValue) {
         Order order = orderService.getEntityById(orderId);
         if (!order.getBuyerUser().getId().equals(userId)) {
             throw new ForbiddenOperationException("Solo el comprador puede iniciar el pago");
         }
-        Payment payment = paymentRepository.findByExternalReference("order-" + orderId)
+        PaymentProvider provider = parseProvider(providerValue);
+        String externalReference = buildExternalReference(orderId, provider);
+        Payment payment = paymentRepository.findByExternalReference(externalReference)
                 .orElseGet(() -> {
                     Payment created = new Payment();
                     created.setOrder(order);
-                    created.setProvider(PaymentProvider.MERCADO_PAGO);
-                    created.setExternalReference("order-" + orderId);
+                    created.setProvider(provider);
+                    created.setExternalReference(externalReference);
                     created.setAmount(order.getTotalAmount());
                     created.setStatus(PaymentStatus.PENDING);
                     return paymentRepository.save(created);
                 });
 
-        String checkoutUrl = createMercadoPagoPreference(order, payment);
+        String checkoutUrl = switch (provider) {
+            case MERCADO_PAGO -> createMercadoPagoPreference(order, payment);
+            case NEQUI -> createNequiCheckout(order, payment);
+        };
         return new PaymentDtos.PaymentPreferenceResponse(
                 payment.getId(),
                 payment.getExternalReference(),
@@ -74,13 +80,17 @@ public class PaymentService {
     }
 
     @Transactional
-    public void processWebhook(Map<String, Object> payload) {
+    public void processWebhook(Map<String, Object> payload, String providerValue) {
+        PaymentProvider provider = parseProvider(providerValue);
         String externalReference = payload.getOrDefault("external_reference", "").toString();
         if (externalReference.isBlank()) {
             return;
         }
         Payment payment = paymentRepository.findByExternalReference(externalReference)
                 .orElseThrow(() -> new ResourceNotFoundException("Pago no encontrado"));
+        if (payment.getProvider() != provider) {
+            throw new BadRequestException("El proveedor del webhook no coincide con el pago");
+        }
         String statusValue = payload.getOrDefault("status", PaymentStatus.PENDING.name()).toString().toUpperCase();
         payment.setStatus(parsePaymentStatus(statusValue));
         payment.setProviderPaymentId(payload.getOrDefault("id", "").toString());
@@ -129,9 +139,9 @@ public class PaymentService {
                     "unit_price", order.getTotalAmount()
             )));
             body.put("back_urls", Map.of(
-                    "success", properties.frontendUrl() + "/payments/success",
-                    "failure", properties.frontendUrl() + "/payments/failure",
-                    "pending", properties.frontendUrl() + "/payments/pending"
+                    "success", properties.frontendUrl() + "/?payment=success",
+                    "failure", properties.frontendUrl() + "/?payment=failure",
+                    "pending", properties.frontendUrl() + "/?payment=pending"
             ));
 
             ResponseEntity<Map> response = restTemplate.exchange(
@@ -148,6 +158,29 @@ public class PaymentService {
             // Fallback controlado para no bloquear desarrollo local.
         }
         return properties.frontendUrl() + "/payments/mock/" + UUID.randomUUID();
+    }
+
+    private String createNequiCheckout(Order order, Payment payment) {
+        return properties.frontendUrl()
+                + "/?payment=nequi&orderId="
+                + order.getId()
+                + "&reference="
+                + payment.getExternalReference();
+    }
+
+    private PaymentProvider parseProvider(String providerValue) {
+        if (providerValue == null || providerValue.isBlank()) {
+            return PaymentProvider.MERCADO_PAGO;
+        }
+        try {
+            return PaymentProvider.valueOf(providerValue.trim().toUpperCase());
+        } catch (IllegalArgumentException exception) {
+            throw new BadRequestException("Proveedor de pago no soportado");
+        }
+    }
+
+    private String buildExternalReference(Long orderId, PaymentProvider provider) {
+        return "order-" + orderId + "-" + provider.name().toLowerCase();
     }
 
     private PaymentStatus parsePaymentStatus(String statusValue) {

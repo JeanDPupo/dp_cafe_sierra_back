@@ -73,6 +73,13 @@ public class CartService {
         if (!item.getCart().getId().equals(cart.getId())) {
             throw new ForbiddenOperationException("No puedes editar ese item");
         }
+        Product product = item.getProduct();
+        if (product.getStatus() != ProductStatus.ACTIVE) {
+            throw new BadRequestException("El producto ya no esta disponible");
+        }
+        if (request.quantityKg().compareTo(product.getAvailableKg()) > 0) {
+            throw new BadRequestException("La cantidad supera la disponibilidad actual");
+        }
         item.setQuantityKg(request.quantityKg());
         item.setSubtotal(item.getUnitPriceSnapshot().multiply(request.quantityKg()));
         cartItemRepository.save(item);

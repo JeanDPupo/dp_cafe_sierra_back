@@ -68,3 +68,22 @@ Start Command: java -jar target/cowork-0.0.1-SNAPSHOT.jar
 - Catalogo y detalle de productos.
 - Publicacion y gestion basica de lotes.
 - Carrito, ordenes, comentarios y pagos ya estructurados en la API.
+## Arranque en Windows
+
+Si `mvn spring-boot:run` falla con `ClassNotFoundException` en esta ruta del proyecto, usa el script:
+
+```powershell
+.\scripts\start-backend.ps1
+```
+
+Para detenerlo:
+
+```powershell
+.\scripts\stop-backend.ps1
+```
+
+El endpoint de prueba recomendado es:
+
+```text
+http://127.0.0.1:8080/api/v1/health
+```

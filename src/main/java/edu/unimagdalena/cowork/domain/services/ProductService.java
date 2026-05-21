@@ -83,8 +83,16 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public List<ProductDtos.ProductCatalogItemResponse> search(BigDecimal priceMin, BigDecimal priceMax, String location, String variety) {
-        return productRepository.searchCatalog(ProductStatus.ACTIVE, priceMin, priceMax, blankToNull(location), blankToNull(variety))
-                .stream()
+        String normalizedLocation = blankToNull(location);
+        String normalizedVariety = blankToNull(variety);
+
+        return productRepository.findByStatusOrderByCreatedAtDesc(ProductStatus.ACTIVE).stream()
+                .filter(product -> priceMin == null || product.getPricePerKg().compareTo(priceMin) >= 0)
+                .filter(product -> priceMax == null || product.getPricePerKg().compareTo(priceMax) <= 0)
+                .filter(product -> normalizedLocation == null
+                        || containsIgnoreCase(product.getProducerProfile().getLocationText(), normalizedLocation))
+                .filter(product -> normalizedVariety == null
+                        || containsIgnoreCase(product.getVariety(), normalizedVariety))
                 .map(this::toCatalogItem)
                 .toList();
     }
@@ -254,6 +262,10 @@ public class ProductService {
 
     private String blankToNull(String value) {
         return value == null || value.isBlank() ? null : value;
+    }
+
+    private boolean containsIgnoreCase(String source, String fragment) {
+        return source != null && source.toLowerCase().contains(fragment.toLowerCase());
     }
 
     private Farm resolveFarm(ProducerProfile profile, Long farmId) {
