@@ -128,6 +128,8 @@ public class ProducerProfileService {
                 profile.getId(),
                 profile.getUser().getId(),
                 profile.getUser().getFullName(),
+                profile.getUser().getPhone(),
+                profile.getUser().getWhatsappNumber(),
                 profile.isActiveSeller(),
                 profile.getBrandName(),
                 profile.getBio(),

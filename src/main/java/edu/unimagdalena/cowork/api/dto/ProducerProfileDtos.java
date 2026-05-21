@@ -46,6 +46,8 @@ public final class ProducerProfileDtos {
             Long id,
             Long userId,
             String ownerName,
+            String phone,
+            String whatsappNumber,
             boolean activeSeller,
             String brandName,
             String bio,
