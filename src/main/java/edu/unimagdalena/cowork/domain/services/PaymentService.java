@@ -9,10 +9,13 @@ import edu.unimagdalena.cowork.domain.entities.PaymentStatus;
 import edu.unimagdalena.cowork.domain.exception.BadRequestException;
 import edu.unimagdalena.cowork.domain.exception.ForbiddenOperationException;
 import edu.unimagdalena.cowork.domain.exception.ResourceNotFoundException;
+import edu.unimagdalena.cowork.domain.entities.ProducerProfile;
 import edu.unimagdalena.cowork.domain.repositories.PaymentEventRepository;
 import edu.unimagdalena.cowork.domain.repositories.PaymentRepository;
+import edu.unimagdalena.cowork.domain.repositories.ProducerProfileRepository;
 import edu.unimagdalena.cowork.shared.config.ApplicationProperties;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.http.HttpEntity;
@@ -32,19 +35,22 @@ public class PaymentService {
     private final OrderService orderService;
     private final ApplicationProperties properties;
     private final RestTemplate restTemplate;
+    private final ProducerProfileRepository producerProfileRepository;
 
     public PaymentService(
             PaymentRepository paymentRepository,
             PaymentEventRepository paymentEventRepository,
             OrderService orderService,
             ApplicationProperties properties,
-            RestTemplate restTemplate
+            RestTemplate restTemplate,
+            ProducerProfileRepository producerProfileRepository
     ) {
         this.paymentRepository = paymentRepository;
         this.paymentEventRepository = paymentEventRepository;
         this.orderService = orderService;
         this.properties = properties;
         this.restTemplate = restTemplate;
+        this.producerProfileRepository = producerProfileRepository;
     }
 
     @Transactional
@@ -127,7 +133,9 @@ public class PaymentService {
     private String createMercadoPagoPreference(Order order, Payment payment) {
         try {
             HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(properties.payment().mercadopago().accessToken());
+            // Usar token del productor si esta configurado, sino el de la plataforma
+            String mpToken = resolveMercadoPagoToken(order);
+            headers.setBearerAuth(mpToken);
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             Map<String, Object> body = new LinkedHashMap<>();
@@ -190,5 +198,14 @@ public class PaymentService {
             case "CANCELLED" -> PaymentStatus.CANCELLED;
             default -> PaymentStatus.PENDING;
         };
+    }
+
+    private String resolveMercadoPagoToken(Order order) {
+        ProducerProfile seller = order.getSellerProfile();
+        if (seller != null && seller.getMercadopagoAccessToken() != null
+                && !seller.getMercadopagoAccessToken().isBlank()) {
+            return seller.getMercadopagoAccessToken();
+        }
+        return properties.payment().mercadopago().accessToken();
     }
 }

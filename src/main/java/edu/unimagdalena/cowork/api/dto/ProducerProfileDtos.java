@@ -12,13 +12,17 @@ public final class ProducerProfileDtos {
 
     public record UpsertProducerProfileRequest(
             boolean activeSeller,
-            @NotBlank @Size(max = 120) String brandName,
+            @Size(max = 120) String brandName,
             @Size(max = 500) String bio,
             @Size(max = 1500) String story,
-            @NotBlank @Size(max = 180) String locationText,
+            @Size(max = 180) String locationText,
             @Size(max = 80) String gps,
             @Size(max = 80) String yearsExperience,
-            @Size(max = 500) String coverImageUrl
+            @Size(max = 500) String coverImageUrl,
+            @Size(max = 500) String paymentDetails,
+            @Size(max = 300) String mercadopagoAccessToken,
+            @Size(max = 300) String mercadopagoPublicKey,
+            @Size(max = 20) String nequiPhone
     ) {
     }
 
@@ -56,6 +60,10 @@ public final class ProducerProfileDtos {
             String gps,
             String yearsExperience,
             String coverImageUrl,
+            String paymentDetails,
+            String mercadopagoAccessToken,
+            String mercadopagoPublicKey,
+            String nequiPhone,
             Instant createdAt,
             List<FarmResponse> farms,
             List<ProductDtos.ProductCatalogItemResponse> products

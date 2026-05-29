@@ -42,4 +42,16 @@ public class ProducerProfile extends BaseEntity {
 
     @Column(length = 500)
     private String coverImageUrl;
+
+    @Column(length = 500)
+    private String paymentDetails;
+
+    @Column(length = 300)
+    private String mercadopagoAccessToken;
+
+    @Column(length = 300)
+    private String mercadopagoPublicKey;
+
+    @Column(length = 20)
+    private String nequiPhone;
 }

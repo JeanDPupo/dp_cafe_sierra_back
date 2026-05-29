@@ -94,13 +94,17 @@ public class ProducerProfileService {
 
     private void apply(ProducerProfileDtos.UpsertProducerProfileRequest request, ProducerProfile profile) {
         profile.setActiveSeller(request.activeSeller());
-        profile.setBrandName(request.brandName());
-        profile.setBio(request.bio());
-        profile.setStory(request.story());
-        profile.setLocationText(request.locationText());
-        profile.setGps(request.gps());
-        profile.setYearsExperience(request.yearsExperience());
-        profile.setCoverImageUrl(request.coverImageUrl());
+        if (request.brandName() != null && !request.brandName().isBlank()) profile.setBrandName(request.brandName());
+        if (request.bio() != null) profile.setBio(request.bio());
+        if (request.story() != null) profile.setStory(request.story());
+        if (request.locationText() != null && !request.locationText().isBlank()) profile.setLocationText(request.locationText());
+        if (request.gps() != null) profile.setGps(request.gps());
+        if (request.yearsExperience() != null) profile.setYearsExperience(request.yearsExperience());
+        if (request.coverImageUrl() != null) profile.setCoverImageUrl(request.coverImageUrl());
+        if (request.paymentDetails() != null) profile.setPaymentDetails(request.paymentDetails());
+        if (request.mercadopagoAccessToken() != null) profile.setMercadopagoAccessToken(request.mercadopagoAccessToken());
+        if (request.mercadopagoPublicKey() != null) profile.setMercadopagoPublicKey(request.mercadopagoPublicKey());
+        if (request.nequiPhone() != null) profile.setNequiPhone(request.nequiPhone());
     }
 
     private void applyFarm(ProducerProfileDtos.FarmRequest request, Farm farm) {
@@ -138,6 +142,10 @@ public class ProducerProfileService {
                 profile.getGps(),
                 profile.getYearsExperience(),
                 profile.getCoverImageUrl(),
+                profile.getPaymentDetails(),
+                profile.getMercadopagoAccessToken(),
+                profile.getMercadopagoPublicKey(),
+                profile.getNequiPhone(),
                 profile.getCreatedAt(),
                 farmRepository.findByProducerProfileIdOrderByCreatedAtDesc(profile.getId()).stream()
                         .map(this::toFarmResponse)
